@@ -1,0 +1,20 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import = "web.bean.dao.BoardDAO" %>
+<%@ page import = "web.bean.dto.BoardDTO" %>
+<%@ page import = "java.sql.Timestamp" %>
+
+<% request.setCharacterEncoding("UTF-8");%>
+
+<jsp:useBean id="article" class="web.bean.dto.BoardDTO">	<!-- BoardDTO 클래스 객체 생성 -->
+  <jsp:setProperty name="article" property="*"/>	<!-- 객체의 이름은 article -->
+</jsp:useBean>	<!-- <jsp:setProperty> 태그를 사용하여 요청(request) 매개변수로 전달된 값을 해당 객체의 속성에 설정 -->
+ 
+<%
+    article.setReg_date(new Timestamp(System.currentTimeMillis()) );	// 현재 시간을 얻어와서 BoardDTO 객체의 reg_date 속성에 설정
+	article.setIp(request.getRemoteAddr());	// 청을 보낸 클라이언트의 IP 주소를 얻어와서 BoardDTO 객체의 ip 속성에 설정
+
+	BoardDAO dbPro = new BoardDAO();	// 데이터베이스와 상호작용하는 DAO(Data Access Object) 클래스의 객체를 생성
+    dbPro.insertArticle(article);	// 게시글을 데이터베이스에 삽입하는 메서드를 호출, article 객체에는 삽입할 게시글의 정보가 포함
+
+    response.sendRedirect("list.jsp");	// 사용자를 "list.jsp" 페이지로 리다이렉트. 즉, 삽입이 완료된 후에 사용자를 게시글 목록 페이지로 보냄
+%>
